@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.com/gameverse/index.html</loc></url>
+  <url><loc>https://example.com/gameverse/games.html</loc></url>
+  <url><loc>https://example.com/gameverse/genres.html</loc></url>
+  <url><loc>https://example.com/gameverse/platforms.html</loc></url>
+  <url><loc>https://example.com/gameverse/reviews.html</loc></url>
+  <url><loc>https://example.com/gameverse/esports.html</loc></url>
+  <url><loc>https://example.com/gameverse/gallery.html</loc></url>
+  <url><loc>https://example.com/gameverse/links.html</loc></url>
+  <url><loc>https://example.com/gameverse/about.html</loc></url>
+  <url><loc>https://example.com/gameverse/services.html</loc></url>
+</urlset>
