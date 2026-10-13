@@ -51,3 +51,62 @@ h2{font-size:clamp(1.65rem,3vw,2.35rem);margin:0 0 12px} h3{margin:0 0 8px} p{ma
 
 
 .player-activity{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.player-activity strong{font-size:1.15rem;line-height:1}.player-activity .small{margin-top:4px}.activity-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2ecc71;margin-right:6px;box-shadow:0 0 0 4px rgba(46,204,113,.12)}
+
+
+/* GameVerse revisions: contrast, compact navigation, global search and readable informers */
+.header-row{gap:12px}
+.brand{flex:0 0 auto;color:#fff}
+.brand span{font-size:1.08rem}
+.nav{display:flex;align-items:center;gap:clamp(2px,.3vw,6px);flex:1 1 auto;min-width:0;max-width:100%;overflow-x:auto;flex-wrap:nowrap;justify-content:flex-end;scrollbar-width:thin;overscroll-behavior-x:contain}
+.nav a{flex:0 0 auto;white-space:nowrap;padding:7px clamp(3px,.34vw,6px);border-radius:8px;text-decoration:none;color:#edf6ff;font-size:clamp(.74rem,.78vw,.9rem);font-weight:700;line-height:1.25}
+.nav a:hover,.nav a.active{background:rgba(53,168,255,.22);color:#fff}
+.nav::-webkit-scrollbar{height:4px}
+.nav::-webkit-scrollbar-thumb{background:#45698c;border-radius:999px}
+.header-search-row{padding:0 0 12px;border-top:1px solid rgba(255,255,255,.06)}
+.global-search{display:flex;align-items:center;gap:9px;width:min(720px,100%);margin:10px 0 0 auto}
+.global-search .input{min-width:0;flex:1;background:#10243c;border-color:#426687;color:#fff}
+.global-search .input::placeholder{color:#b7cce2}
+.global-search .btn{flex:0 0 auto;padding:10px 18px;background:linear-gradient(135deg,#168ce0,#625cff);color:#fff;border:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.weather-card{border:1px solid rgba(53,168,255,.38);background:linear-gradient(155deg,rgba(21,58,91,.98),rgba(10,25,44,.98));box-shadow:0 14px 34px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.04)}
+.weather-city{color:#f3f9ff;font-size:1.05rem}
+.weather-temp{color:#81d0ff;font-size:2.7rem}
+.weather-desc{color:#e5f3ff;font-weight:650}
+.weather-meta span{color:#e0efff;border-color:rgba(133,192,239,.2)}
+.player-activity strong{color:#a7ffd1;font-size:1.2rem}
+.informer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.informer{min-width:0;display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:16px;border:1px solid rgba(255,255,255,.14);box-shadow:var(--shadow)}
+.informer-time{background:linear-gradient(140deg,rgba(24,110,171,.4),rgba(13,27,46,.98));border-color:rgba(91,190,255,.46)}
+.informer-currency{background:linear-gradient(140deg,rgba(133,94,22,.38),rgba(13,27,46,.98));border-color:rgba(255,200,87,.46)}
+.informer-label{font-size:.84rem;color:#d4e8fa;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.informer-value{display:block;font-size:clamp(1.45rem,2.5vw,2.15rem);line-height:1.15;letter-spacing:-.5px;color:#fff;font-weight:850;overflow-wrap:anywhere}
+.informer-time .informer-value{color:#8ad4ff}
+.informer-currency .informer-value{color:#ffe08b}
+.informer p{margin:0;color:#d4e2f0;font-size:.88rem}
+.informer-note{font-size:.75rem;color:#a9c0d6}
+.home-news-list{display:grid;gap:9px}
+.home-news-item{padding:12px 14px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(7,20,35,.55)}
+.home-news-item a{color:#eaf5ff;font-weight:750;text-decoration:none}
+.home-news-item a:hover{color:#78caff}
+.home-news-item p{font-size:.86rem;margin:4px 0 0}
+.widget-status{min-height:1.2em}
+.xml-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.feed-item{padding:18px;background:rgba(12,30,49,.8);border:1px solid rgba(98,176,235,.22);border-radius:15px}
+.feed-item a{color:#e8f5ff}
+@media(max-width:900px){
+ .nav{display:flex;justify-content:flex-start;gap:2px;max-width:calc(100vw - 126px)}
+ .nav a{padding:7px 4px;font-size:.78rem}
+ .header-row{gap:8px}
+ .brand{gap:7px}
+ .logo{width:38px;height:38px}
+ .header-search-row{padding-bottom:9px}
+ .global-search{gap:6px}
+ .informer-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+ .header-row{min-height:58px;gap:6px;align-items:center}
+ .nav{display:flex;max-width:calc(100vw - 104px);gap:2px}
+ .nav a{font-size:.75rem;padding:6px 4px}
+ .global-search .input{padding:10px}
+ .global-search .btn{padding:10px 12px}
+}

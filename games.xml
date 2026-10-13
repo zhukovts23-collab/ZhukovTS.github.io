@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gameCatalog title="GameVerse — каталог видеоигр" updated="2026-10-13">
+  <game id="the-witcher-3"><title>The Witcher 3: Wild Hunt</title><genre>RPG</genre><platforms>PC / PlayStation / Xbox / Switch</platforms><year>2015</year><rating>4.9</rating><tag>История</tag></game>
+  <game id="cyberpunk-2077"><title>Cyberpunk 2077</title><genre>Action RPG</genre><platforms>PC / PlayStation / Xbox</platforms><year>2020</year><rating>4.6</rating><tag>Открытый мир</tag></game>
+  <game id="minecraft"><title>Minecraft</title><genre>Sandbox</genre><platforms>PC / Консоли / Mobile</platforms><year>2011</year><rating>4.8</rating><tag>Творчество</tag></game>
+  <game id="baldurs-gate-3"><title>Baldur’s Gate 3</title><genre>RPG</genre><platforms>PC / PlayStation / Xbox</platforms><year>2023</year><rating>4.9</rating><tag>Тактика</tag></game>
+  <game id="elden-ring"><title>Elden Ring</title><genre>Action RPG</genre><platforms>PC / PlayStation / Xbox</platforms><year>2022</year><rating>4.8</rating><tag>Сложность</tag></game>
+  <game id="hades"><title>Hades</title><genre>Roguelike</genre><platforms>PC / PlayStation / Xbox / Switch</platforms><year>2020</year><rating>4.7</rating><tag>Динамика</tag></game>
+  <game id="forza-horizon-5"><title>Forza Horizon 5</title><genre>Гонки</genre><platforms>PC / Xbox</platforms><year>2021</year><rating>4.6</rating><tag>Автоспорт</tag></game>
+  <game id="it-takes-two"><title>It Takes Two</title><genre>Приключение</genre><platforms>PC / PlayStation / Xbox / Switch</platforms><year>2021</year><rating>4.8</rating><tag>Кооператив</tag></game>
+  <game id="stardew-valley"><title>Stardew Valley</title><genre>Симулятор</genre><platforms>PC / Консоли / Mobile</platforms><year>2016</year><rating>4.7</rating><tag>Уют</tag></game>
+</gameCatalog>
