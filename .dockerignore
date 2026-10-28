@@ -1,0 +1,9 @@
+.git
+.env
+app/config.local.php
+app/preview*
+.openai
+node_modules
+tests
+docs
+*.log
