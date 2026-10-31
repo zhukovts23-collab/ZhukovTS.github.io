@@ -1,0 +1,8 @@
+.env
+app/config.local.php
+app/cache/
+.openai/
+node_modules/
+*.log
+app/preview.env
+app/preview-bootstrap.sh
