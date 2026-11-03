@@ -1,6 +1,6 @@
 <?php
 if(PHP_SAPI!=='cli')exit;
-require __DIR__.'/../app/bootstrap.php';
+require_once __DIR__.'/../app/bootstrap.php';
 $base=$config['base_url'];if(!filter_var($base,FILTER_VALIDATE_URL))exit("Invalid APP_URL\n");
 $root=dirname(__DIR__);$files=array_merge(glob($root.'/*.html'),glob($root.'/services/*.html'));
 $xml=new DOMDocument('1.0','UTF-8');$set=$xml->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9','urlset');$xml->appendChild($set);
