@@ -36,6 +36,15 @@ for path in $paths; do
  chmod 644 "$path"
 done
 "$php_bin" bin/configure-url.php
+chmod 644 robots.txt sitemap.xml sitemap.txt
+for path in / /robots.txt /sitemap.xml /sitemap.txt /services/pulse.html; do
+ status=$(curl -sS --connect-timeout 5 --max-time 15 -o /dev/null -w '%{http_code}' "http://zhukovop.beget.tech$path")
+ printf '%s HTTP %s\n' "$path" "$status"
+ if [ "$status" != 200 ]; then
+  printf 'Public access check failed. Backup: %s\n' "$backup_dir"
+  exit 4
+ fi
+done
 curl -fsS --max-time 25 'http://zhukovop.beget.tech/api/pulse.php' > "$stage_dir/pulse.json"
 "$php_bin" -r '$d=json_decode(file_get_contents($argv[1]),true,32,JSON_THROW_ON_ERROR);if(count($d["games"]??[])!==2)exit(2);foreach($d["games"] as $g){echo $g["name"].": ".($g["players"]??"Steam unavailable")." | ".($g["sampled_at"]??"no sample").PHP_EOL;if($g["players"]===null)exit(3);}' "$stage_dir/pulse.json"
 printf 'DEPLOYED: http://zhukovop.beget.tech/services/pulse.html\nBackup: %s\n' "$backup_dir"
