@@ -1,0 +1,16 @@
+Options -Indexes
+DirectoryIndex index.html
+<FilesMatch "^(\.env.*|.*\.log|composer\.(json|lock)|package.*\.json|Dockerfile|compose\.yaml)$">
+Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+</IfModule>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(?:\.git|app|bin|database|tests|docs)(?:/|$) - [F,L]
+RewriteRule ^rss\.xml$ api/export.php?format=rss [L]
+</IfModule>

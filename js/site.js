@@ -1,322 +1,38 @@
-
-const SITE_PAGES = [
-  {title:'Главная',url:'index.html',text:'GameVerse видеоигры каталог новости обзоры сервисы погода курс валют'},
-  {title:'Каталог игр',url:'games.html',text:'видеоигры каталог RPG экшен стратегия симулятор хоррор приключения XML'},
-  {title:'Жанры',url:'genres.html',text:'жанры RPG action стратегия симулятор киберспорт'},
-  {title:'Платформы',url:'platforms.html',text:'ПК PlayStation Xbox Nintendo мобильные платформы'},
-  {title:'Обзоры',url:'reviews.html',text:'обзоры игр рейтинги впечатления прохождение'},
-  {title:'Мир киберспорта',url:'esports.html',text:'киберспорт турниры команды дисциплины esports'},
-  {title:'Галерея',url:'gallery.html',text:'фото изображения скриншоты игровые миры'},
-  {title:'Ссылки',url:'links.html',text:'Steam PlayStation Xbox Nintendo игровые ресурсы'},
-  {title:'XML-каталог',url:'xml.html',text:'XML каталог videogames игры XML-файл структура данных games.xml'},
-  {title:'База данных',url:'database.html',text:'БД база данных игры каталог новости публикации схема SQL'},
-  {title:'RSS-лента',url:'rss.html',text:'RSS лента новости подписка XML RSS feed'},
-  {title:'О сайте',url:'about.html',text:'GameVerse редакция о сайте видеоигры медиа'},
-  {title:'Сервисы',url:'services.html',text:'поиск гостевая книга форум новости рейтинг статистика'},
-  {title:'Поиск по сайту',url:'services/search.html',text:'поиск разделов ключевые слова AND OR'},
-  {title:'Новости',url:'services/news.html',text:'новости GameVerse публикации редакционный архив RSS'},
-  {title:'Форум',url:'services/forum.html',text:'форум темы ответы сообщество обсуждения'},
-  {title:'Гостевая книга',url:'services/guestbook.html',text:'гостевая книга сообщения обратная связь'},
-  {title:'Рейтинг игр',url:'services/rating.html',text:'рейтинг оценка игр звёзды'},
-  {title:'Статистика посещаемости',url:'services/stats.html',text:'статистика просмотры страницы посещаемость'}
-];
-
-
-
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function key(k){return 'gameverse_'+k}
-function now(){return new Date().toLocaleString('ru-RU')}
-function toast(msg,type='ok'){
-  let box=document.querySelector('#toast'); if(!box){box=document.createElement('div');box.id='toast';box.style.position='fixed';box.style.right='18px';box.style.bottom='18px';box.style.zIndex='100';document.body.appendChild(box)}
-  box.innerHTML=`<div class="notice ${type==='warn'?'warn':''}" style="margin:0;box-shadow:var(--shadow)">${esc(msg)}</div>`; setTimeout(()=>box.innerHTML='',2600);
-}
-
-function initGlobalNavigation(){
- const nav=document.querySelector('.nav');
- const header=document.querySelector('.site-header');
- if(!nav||!header)return;
- const inServicePath=location.pathname.includes('/services/');
- const base=inServicePath?'../':'';
- const links=[
-  ['Главная','index.html'],['Каталог','games.html'],['Жанры','genres.html'],['Платформы','platforms.html'],
-  ['Обзоры','reviews.html'],['Киберспорт','esports.html'],['Галерея','gallery.html'],['Ссылки','links.html'],
-  ['XML','xml.html'],['БД','database.html'],['RSS','rss.html'],['Сервисы','services.html'],['О сайте','about.html']
- ];
- nav.innerHTML=links.map(([label,url])=>`<a href="${base}${url}">${label}</a>`).join('');
- let row=header.querySelector('.header-search-row');
- if(!row){
-  row=document.createElement('div');row.className='container header-search-row';
-  row.innerHTML='<form class="global-search" role="search"><label class="sr-only" for="global-site-query">Поиск по GameVerse</label><input class="input" type="search" id="global-site-query" placeholder="Поиск по сайту: игра, жанр, платформа" aria-label="Поиск по сайту"><button class="btn primary" type="submit">Найти</button></form>';
-  header.querySelector('.header-row')?.insertAdjacentElement('afterend',row);
- }
- const form=row.querySelector('form');
- const input=row.querySelector('input');
- form?.addEventListener('submit',event=>{
-  event.preventDefault();
-  const query=input.value.trim();
-  const target=new URL(base+'services/search.html',location.href);
-  if(query)target.searchParams.set('q',query);
-  location.href=target.href;
- });
-}
-function initActiveNav(){
- const currentPath=location.pathname.replace(/\/$/,'/index.html');
- document.querySelectorAll('.nav a').forEach(a=>{
-  const targetPath=new URL(a.href,location.href).pathname.replace(/\/$/,'/index.html');
-  if(targetPath===currentPath)a.classList.add('active');
- });
-}
-function initStats(){
- const page=location.pathname.split('/').pop()||'index.html';
- const data=JSON.parse(localStorage.getItem(key('stats'))||'{}');
- const entry=data[page]||{views:0,last:''}; entry.views++; entry.last=now(); data[page]=entry;
- let total=Object.values(data).reduce((s,x)=>s+x.views,0); let hosts=Number(localStorage.getItem(key('hosts'))||0);
- const visitorKey=key('visitor');
- if(!sessionStorage.getItem(visitorKey)){ sessionStorage.setItem(visitorKey,'1'); hosts++; localStorage.setItem(key('hosts'),String(hosts)); }
- localStorage.setItem(key('stats'),JSON.stringify(data));
- document.querySelectorAll('[data-counter]').forEach(el=>el.textContent=total);
- document.querySelectorAll('[data-hosts]').forEach(el=>el.textContent=hosts);
-}
-function fetchWithTimeout(url,timeoutMs=9000){
- const controller=new AbortController();
- const timer=setTimeout(()=>controller.abort(),timeoutMs);
- return fetch(url,{signal:controller.signal}).finally(()=>clearTimeout(timer));
-}
-function cityLocalTime(timeZone){
- try{return new Intl.DateTimeFormat('ru-RU',{hour:'2-digit',minute:'2-digit',timeZone}).format(new Date());}
- catch{return new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});}
-}
-function estimateCityPlayers(city,hour){
- const hourlyFactor=[0.32,0.28,0.24,0.20,0.18,0.20,0.26,0.34,0.46,0.58,0.66,0.70,0.74,0.78,0.86,0.98,1.08,1.20,1.30,1.38,1.42,1.30,1.04,0.74][Math.min(Math.max(hour,0),23)];
- const active=Math.max(120,Math.round((city.population||100000)*(city.rate||0.01)*hourlyFactor));
- return active>=100000?`${Math.round(active/1000)} тыс.`:active>=10000?`${(active/1000).toFixed(1)} тыс.`:active.toLocaleString('ru-RU');
-}
-function initWidgets(){
- const times=document.querySelectorAll('[data-clock]');
- if(times.length){const tick=()=>times.forEach(el=>el.textContent=new Date().toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'medium'}));tick();setInterval(tick,1000);}
- const currency=document.querySelector('[data-currency]');
- const currencyUpdated=document.querySelector('[data-currency-updated]');
- if(currency){
-  fetchWithTimeout('https://open.er-api.com/v6/latest/EUR',9000)
-   .then(r=>{if(!r.ok)throw new Error('currency');return r.json();})
-   .then(data=>{
-    const rate=Number(data?.rates?.RUB);
-    if(data?.result==='error'||!Number.isFinite(rate)||rate<=0)throw new Error('rate');
-    currency.textContent=`1 EUR ≈ ${rate.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})} ₽`;
-    if(currencyUpdated)currencyUpdated.textContent='Источник: ExchangeRate-API · обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-   })
-   .catch(()=>{currency.textContent='Временно недоступен';if(currencyUpdated)currencyUpdated.textContent='Проверьте подключение к Интернету';});
- }
- const grid=document.querySelector('[data-weather-grid]');
- const updated=document.querySelector('[data-weather-updated]');
- if(!grid)return;
- const cities=[
-  {name:'Обнинск',country:'Россия',lat:55.096,lon:36.611,zone:'Europe/Moscow',population:125000,rate:.010},
-  {name:'Москва',country:'Россия',lat:55.7558,lon:37.6173,zone:'Europe/Moscow',population:13200000,rate:.011},
-  {name:'Санкт-Петербург',country:'Россия',lat:59.9343,lon:30.3351,zone:'Europe/Moscow',population:5600000,rate:.0105},
-  {name:'Лондон',country:'Великобритания',lat:51.5074,lon:-.1278,zone:'Europe/London',population:9000000,rate:.010},
-  {name:'Нью-Йорк',country:'США',lat:40.7128,lon:-74.006,zone:'America/New_York',population:8400000,rate:.0105},
-  {name:'Париж',country:'Франция',lat:48.8566,lon:2.3522,zone:'Europe/Paris',population:2200000,rate:.010},
-  {name:'Токио',country:'Япония',lat:35.6762,lon:139.6503,zone:'Asia/Tokyo',population:14000000,rate:.011},
-  {name:'Дубай',country:'ОАЭ',lat:25.2048,lon:55.2708,zone:'Asia/Dubai',population:3900000,rate:.012}
- ];
- const codes={
-  0:['Ясно','☀️'],1:['Преимущественно ясно','🌤️'],2:['Переменная облачность','⛅'],3:['Пасмурно','☁️'],
-  45:['Туман','🌫️'],48:['Изморозь и туман','🌫️'],51:['Слабая морось','🌦️'],53:['Морось','🌦️'],55:['Сильная морось','🌧️'],
-  56:['Ледяная морось','🌧️'],57:['Сильная ледяная морось','🌧️'],61:['Небольшой дождь','🌦️'],63:['Дождь','🌧️'],65:['Сильный дождь','🌧️'],
-  66:['Ледяной дождь','🌨️'],67:['Сильный ледяной дождь','🌨️'],71:['Небольшой снег','🌨️'],73:['Снег','❄️'],75:['Сильный снег','❄️'],
-  77:['Снежные зёрна','❄️'],80:['Небольшой ливень','🌦️'],81:['Ливень','🌧️'],82:['Сильный ливень','⛈️'],85:['Снегопад','🌨️'],
-  86:['Сильный снегопад','❄️'],95:['Гроза','⛈️'],96:['Гроза с градом','⛈️'],99:['Сильная гроза с градом','⛈️']
- };
- const card=(city,current)=>{
-  const h=current?.time?Number(current.time.slice(11,13)):Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hourCycle:'h23',timeZone:city.zone}).format(new Date()));
-  const info=current?(codes[current.weather_code]||['Погодные условия','🌡️']):['Погода временно недоступна','⌛'];
-  const numeric=(value,suffix='')=>Number.isFinite(Number(value))&&value!==null?Math.round(Number(value))+suffix:'—';
-  const temperature=current?numeric(current.temperature_2m,'°'):'—';
-  const feels=current?numeric(current.apparent_temperature,'°'):'—';
-  const humidity=current?numeric(current.relative_humidity_2m,'%'):'—';
-  const wind=current?numeric(current.wind_speed_10m,' км/ч'):'—';
-  return `<article class="weather-card"><div class="weather-top"><div><span class="weather-city">${esc(city.name)}</span><span class="small muted">${esc(city.country)}</span></div><span class="weather-icon" aria-hidden="true">${info[1]}</span></div><div class="weather-temp">${temperature}</div><div class="weather-desc">${esc(info[0])}</div><div class="weather-meta"><span>Ощущается ${feels}</span><span>💧 ${humidity}</span><span>💨 ${wind}</span></div><div class="player-activity"><div><div class="small muted"><span class="activity-dot"></span>Играют сейчас</div><strong>≈ ${estimateCityPlayers(city,Number.isFinite(h)?h:12)}</strong></div><div class="small muted" title="Модельная оценка, не официальная статистика">оценка</div></div><div class="small muted" style="margin-top:8px">Местное время ${esc(current?.time?current.time.slice(11,16):cityLocalTime(city.zone))}</div></article>`;
- };
- // Separate requests prevent a bad response for one coordinate from removing weather for every city.
- Promise.all(cities.map(async city=>{
-  const query=new URLSearchParams({
-   latitude:String(city.lat),longitude:String(city.lon),
-   current:'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day',
-   temperature_unit:'celsius',wind_speed_unit:'kmh',timezone:city.zone,forecast_days:'1'
-  });
-  try{
-   const response=await fetchWithTimeout('https://api.open-meteo.com/v1/forecast?'+query.toString(),9000);
-   if(!response.ok)throw new Error('weather');
-   const data=await response.json();
-   return {city,current:data.current||null};
-  }catch{return {city,current:null};}
- })).then(results=>{
-  grid.innerHTML=results.map(result=>card(result.city,result.current)).join('');
-  const failures=results.filter(result=>!result.current).length;
-  if(updated)updated.textContent=failures?(`Обновлено частично: ${results.length-failures} из ${results.length} городов`):('Обновлено: '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
- });
-}
-function seedServiceData(){
- if(!localStorage.getItem(key('guestbook'))){
-   localStorage.setItem(key('guestbook'),JSON.stringify([
-    {name:'GameFan',text:'Отличный каталог — особенно понравился раздел с жанрами!',date:'01.10.2026, 00:12'},
-    {name:'Player_42',text:'Добавьте больше материалов про кооперативные игры.',date:'01.10.2026, 00:25'}
-   ]));
- }
- if(!localStorage.getItem(key('forum'))){
-   localStorage.setItem(key('forum'),JSON.stringify([
-    {id:1,title:'Во что играете сейчас?',author:'Moderator',date:'01.10.2026, 00:30',replies:[{author:'Player_42',text:'Сейчас прохожу Baldur’s Gate 3.',date:'01.10.2026, 00:41'}]},
-    {id:2,title:'Любимые игры на двоих',author:'GameFan',date:'01.10.2026, 00:55',replies:[]}
-   ]));
- }
- if(!localStorage.getItem(key('news'))){
-   localStorage.setItem(key('news'),JSON.stringify([
-    {title:'Открыт новый раздел «Мир киберспорта»',text:'В каталоге появился отдельный раздел о дисциплинах, командах и турнирной сцене.',date:'01.10.2026'},
-    {title:'Обновлена коллекция ссылок',text:'Добавлены быстрые переходы к официальным игровым площадкам и справочным ресурсам.',date:'30.09.2026'}
-   ]));
- }
-}
-
-async function loadGameCatalog(){
- const response=await fetchWithTimeout('games.xml',9000);
- if(!response.ok)throw new Error('Не удалось загрузить games.xml');
- const xmlText=await response.text();
- const doc=new DOMParser().parseFromString(xmlText,'application/xml');
- if(doc.querySelector('parsererror'))throw new Error('Ошибка в games.xml');
- const entries=[...doc.querySelectorAll('game')].map(node=>({
-  name:node.querySelector('title')?.textContent.trim()||'',
-  genre:node.querySelector('genre')?.textContent.trim()||'',
-  platform:node.querySelector('platforms')?.textContent.trim()||'',
-  year:Number(node.querySelector('year')?.textContent.trim())||'—',
-  rating:Number(node.querySelector('rating')?.textContent.trim())||0,
-  tag:node.querySelector('tag')?.textContent.trim()||''
- })).filter(game=>game.name);
- if(!entries.length)throw new Error('В XML-файле не найдено игр');
- return entries;
-}
-function initGamesTable(){
- const wrap=document.querySelector('#games-table');if(!wrap)return;
- const query=document.querySelector('#game-filter');const genre=document.querySelector('#genre-filter');
- let entries=[];
- const render=()=>{
-  const q=(query?.value||'').trim().toLowerCase();const g=genre?.value||'';
-  const matches=entries.filter(game=>(!q||`${game.name} ${game.genre} ${game.platform} ${game.year} ${game.tag}`.toLowerCase().includes(q))&&(!g||game.genre===g));
-  wrap.innerHTML=matches.length?matches.map(game=>`<tr><td><strong>${esc(game.name)}</strong></td><td>${esc(game.genre)}</td><td>${esc(game.platform)}</td><td>${game.year}</td><td>★ ${Number(game.rating).toFixed(1)}</td><td><span class="tag">${esc(game.tag)}</span></td></tr>`).join(''):`<tr><td colspan="6">${entries.length?'Ничего не найдено.':'Загрузка XML-каталога…'}</td></tr>`;
- };
- [query,genre].forEach(element=>element?.addEventListener('input',render));
- genre?.addEventListener('change',render);
- loadGameCatalog().then(games=>{entries=games;render();}).catch(()=>{wrap.innerHTML='<tr><td colspan="6">Не удалось загрузить games.xml. Проверьте, что файл опубликован в корне сайта.</td></tr>';});
-}
-function initXmlCatalog(){
- const table=document.querySelector('#xml-catalog-table');if(!table)return;
- const status=document.querySelector('#xml-catalog-status');
- loadGameCatalog().then(games=>{
-  table.innerHTML=games.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.genre)}</td><td>${esc(g.platform)}</td><td>${g.year}</td><td>★ ${Number(g.rating).toFixed(1)}</td><td>${esc(g.tag)}</td></tr>`).join('');
-  if(status)status.textContent=`Каталог загружен из games.xml · записей: ${games.length}`;
- }).catch(()=>{if(status){status.textContent='Не удалось загрузить XML-каталог.';status.className='notice warn';}table.innerHTML='<tr><td colspan="6">XML-файл недоступен.</td></tr>';});
-}
-function initRssPage(){
- const out=document.querySelector('#rss-items');if(!out)return;
- const status=document.querySelector('#rss-status');
- fetchWithTimeout('rss.xml',9000).then(response=>{if(!response.ok)throw new Error('rss');return response.text();}).then(text=>{
-  const doc=new DOMParser().parseFromString(text,'application/xml');
-  if(doc.querySelector('parsererror'))throw new Error('rss xml');
-  const items=[...doc.querySelectorAll('channel > item')];
-  out.innerHTML=items.map(item=>{
-   const title=item.querySelector('title')?.textContent.trim()||'Публикация GameVerse';
-   const description=item.querySelector('description')?.textContent.trim()||'';
-   const link=item.querySelector('link')?.textContent.trim()||'services/news.html';
-   const date=item.querySelector('pubDate')?.textContent.trim()||'';
-   return `<article class="feed-item"><div class="small muted">${esc(date)}</div><h3><a href="${esc(link)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></h3><p>${esc(description)}</p></article>`;
-  }).join('')||'<div class="notice">В ленте пока нет публикаций.</div>';
-  if(status){status.textContent=`RSS-лента загружена · публикаций: ${items.length}`;status.className='notice';}
- }).catch(()=>{if(status){status.textContent='Не удалось загрузить rss.xml.';status.className='notice warn';}});
-}
-
-function initSearch(){
- const out=document.querySelector('#search-results');if(!out)return;
- const input=document.querySelector('#site-query');if(!input)return;
- input.value=new URLSearchParams(location.search).get('q')||'';
- const base=location.pathname.includes('/services/')?'../':'';
- const form=input.closest('form');
- function matches(page,query){
-  query=query.trim().toLowerCase();if(!query)return true;
-  return query.split(/\s+or\s+/i).some(group=>group.split(/\s+/).filter(Boolean).every(term=>`${page.title} ${page.text}`.toLowerCase().includes(term)));
- }
- function render(){
-  const found=SITE_PAGES.filter(page=>matches(page,input.value));
-  out.innerHTML=found.map(page=>`<div class="list-item"><h3><a href="${base}${page.url}">${esc(page.title)}</a></h3><p>${esc(page.text)}</p></div>`).join('')||'<div class="notice warn">По вашему запросу ничего не найдено.</div>';
- }
- input.addEventListener('input',render);
- form?.addEventListener('submit',event=>{event.preventDefault();const url=new URL(location.href);if(input.value.trim())url.searchParams.set('q',input.value.trim());else url.searchParams.delete('q');history.replaceState(null,'',url);render();});
- render();
-}
-
-function initGuestbook(){
- const out=document.querySelector('#guest-list'); if(!out)return; seedServiceData();
- const form=document.querySelector('#guest-form'); const admin=document.querySelector('#admin-mode'); const pass=document.querySelector('#admin-pass');
- function render(){ const data=JSON.parse(localStorage.getItem(key('guestbook'))||'[]'); out.innerHTML=data.map((m,i)=>`<div class="list-item"><div class="small muted">${esc(m.date)}</div><h3>${esc(m.name)}</h3><p>${esc(m.text)}</p>${admin?.checked?`<button class="btn" data-del="${i}">Удалить</button>`:''}</div>`).join('')||'<div class="notice">Пока нет сообщений.</div>'; out.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{let d=JSON.parse(localStorage.getItem(key('guestbook')));d.splice(Number(b.dataset.del),1);localStorage.setItem(key('guestbook'),JSON.stringify(d));render();}); }
- form.addEventListener('submit',e=>{e.preventDefault(); const name=form.name.value.trim(), text=form.text.value.trim(); if(!name||!text)return toast('Заполните имя и сообщение','warn'); const bad=['спам','хулиган']; if(bad.some(w=>text.toLowerCase().includes(w)))return toast('Сообщение содержит запрещённое выражение','warn'); const d=JSON.parse(localStorage.getItem(key('guestbook'))||'[]');d.unshift({name,text,date:now()});localStorage.setItem(key('guestbook'),JSON.stringify(d));form.reset();render();toast('Сообщение добавлено');});
- admin?.addEventListener('change',()=>{if(admin.checked){if(pass.value!=='gameadmin'){admin.checked=false;toast('Демо-пароль модератора: gameadmin','warn');return}}render()}); render();
-}
-
-function initForum(){
- const list=document.querySelector('#topic-list'); if(!list)return; seedServiceData();
- let data=JSON.parse(localStorage.getItem(key('forum'))||'[]'); const form=document.querySelector('#topic-form');
- const render=()=>{data=JSON.parse(localStorage.getItem(key('forum'))||'[]');list.innerHTML=data.map(t=>`<div class="list-item"><div class="small muted">${esc(t.date)} · ${esc(t.author)}</div><h3>${esc(t.title)}</h3><details><summary>Ответы (${t.replies.length})</summary><div class="list" style="margin-top:10px">${t.replies.map(r=>`<div class="list-item"><strong>${esc(r.author)}</strong><div class="small muted">${esc(r.date)}</div><p>${esc(r.text)}</p></div>`).join('')||'<p>Ответов пока нет.</p>'}</div><form data-reply="${t.id}" class="form-grid" style="margin-top:12px"><div class="field"><label>Имя</label><input class="input" name="author" required></div><div class="field"><label>Ответ</label><input class="input" name="text" required></div><div class="field full"><button class="btn primary">Ответить</button></div></form></details></div>`).join(''); list.querySelectorAll('form[data-reply]').forEach(f=>f.onsubmit=e=>{e.preventDefault();const id=Number(f.dataset.reply);const t=data.find(x=>x.id===id);t.replies.push({author:f.author.value.trim(),text:f.text.value.trim(),date:now()});localStorage.setItem(key('forum'),JSON.stringify(data));render();toast('Ответ опубликован');});};
- form.addEventListener('submit',e=>{e.preventDefault();const title=form.title.value.trim(), author=form.author.value.trim();if(!title||!author)return;const id=Date.now();data.unshift({id,title,author,date:now(),replies:[]});localStorage.setItem(key('forum'),JSON.stringify(data));form.reset();render();toast('Тема создана')}); render();
-}
-
-function initNews(){
- const out=document.querySelector('#news-list');if(!out)return;seedServiceData();
- const form=document.querySelector('#news-form');const status=document.querySelector('#news-status');
- const render=()=>{
-  const data=JSON.parse(localStorage.getItem(key('news'))||'[]');
-  out.innerHTML=data.map(item=>`<article class="list-item"><div class="small muted">${esc(item.date)}</div><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')||'<div class="notice">Публикаций пока нет.</div>';
- };
- form?.addEventListener('submit',event=>{
-  event.preventDefault();
-  if(form.pass.value!=='gameadmin'){status.textContent='Доступ к публикации не подтверждён.';status.className='notice warn';return;}
-  const title=form.title.value.trim(),text=form.text.value.trim();
-  if(!title||!text){status.textContent='Заполните заголовок и текст новости.';status.className='notice warn';return;}
-  const data=JSON.parse(localStorage.getItem(key('news'))||'[]');
-  data.unshift({title,text,date:now().slice(0,10)});
-  localStorage.setItem(key('news'),JSON.stringify(data));form.reset();
-  status.textContent='Новость сохранена в локальном хранилище этого браузера.';status.className='notice';render();
- });
- document.querySelector('#export-news-rss')?.addEventListener('click',()=>{
-  const data=JSON.parse(localStorage.getItem(key('news'))||'[]');
-  const xmlEscape=value=>String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-  const base=new URL('../',location.href).href;
-  const items=data.map(item=>`<item><title>${xmlEscape(item.title)}</title><description>${xmlEscape(item.text)}</description><link>${xmlEscape(base+'services/news.html')}</link><guid isPermaLink="false">${xmlEscape(item.title+'-'+item.date)}</guid><pubDate>${new Date().toUTCString()}</pubDate></item>`).join('\n');
-  const feed=`<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>GameVerse — новости</title><link>${xmlEscape(base)}</link><description>Новости игрового медиа GameVerse</description>${items}</channel></rss>`;
-  const blob=new Blob([feed],{type:'application/rss+xml;charset=utf-8'});const objectUrl=URL.createObjectURL(blob);
-  const anchor=document.createElement('a');anchor.href=objectUrl;anchor.download='gameverse-news.xml';document.body.appendChild(anchor);anchor.click();anchor.remove();
-  setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);toast('RSS-файл сформирован для последующей публикации.');
- });
- render();
-}
-function initHomeNewsPreview(){
- const out=document.querySelector('#home-news-list');if(!out)return;
- const news=JSON.parse(localStorage.getItem(key('news'))||'[]').slice(0,3);
- out.innerHTML=news.map(item=>`<article class="home-news-item"><a href="services/news.html">${esc(item.title)}</a><p>${esc(item.text)}</p><div class="small muted">${esc(item.date)}</div></article>`).join('')||'<div class="notice">Новости скоро появятся.</div>';
-}
-
-function initRating(){
- const out=document.querySelector('#rating-result'); if(!out)return;
- const gamesList=['The Witcher 3: Wild Hunt','Cyberpunk 2077','Minecraft','Baldur’s Gate 3','Elden Ring','Hades'];
- const box=document.querySelector('#rating-box');
- const render=()=>{const data=JSON.parse(localStorage.getItem(key('ratings'))||'{}'); const vals=Object.values(data); const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0; out.textContent=vals.length?`Средняя оценка сайта: ${avg.toFixed(1)} / 5 · голосов: ${vals.length}`:'Пока нет голосов'; box.innerHTML=gamesList.map(g=>{const id=g.replace(/[^a-z0-9]/gi,'_');const v=data[id];return `<div class="list-item" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><strong>${esc(g)}</strong><div class="small muted">${v?`Ваша/последняя оценка: ${v}/5`:'оцените игру'}</div></div><div class="rating-stars" data-game="${esc(id)}">${[1,2,3,4,5].map(n=>`<button type="button" data-rate="${n}" title="${n}">★</button>`).join('')}</div></div>`}).join(''); box.querySelectorAll('[data-game]').forEach(el=>el.querySelectorAll('button').forEach(b=>b.onclick=()=>{const d=JSON.parse(localStorage.getItem(key('ratings'))||'{}');d[el.dataset.game]=Number(b.dataset.rate);localStorage.setItem(key('ratings'),JSON.stringify(d));render();toast('Оценка сохранена')}));};render();
-}
-
-function initStatsPage(){
- const out=document.querySelector('#stats-table'); if(!out)return;
- const data=JSON.parse(localStorage.getItem(key('stats'))||'{}');
- const rows=Object.entries(data).sort((a,b)=>b[1].views-a[1].views); const total=rows.reduce((s,[,v])=>s+v.views,0);document.querySelector('[data-total-views]')?.replaceChildren(document.createTextNode(String(total)));
- out.innerHTML=rows.map(([page,v])=>`<tr><td>${esc(page)}</td><td>${v.views}</td><td>${esc(v.last)}</td></tr>`).join('')||'<tr><td colspan="3">Статистика появится после посещения страниц.</td></tr>';
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
- initGlobalNavigation(); initActiveNav(); initStats(); initWidgets(); seedServiceData(); initGamesTable(); initXmlCatalog(); initRssPage(); initSearch(); initGuestbook(); initForum(); initNews(); initHomeNewsPreview(); initRating(); initStatsPage();
-});
+'use strict';
+const ROOT=new URL('../',document.currentScript.src), $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const endpoint=(action,params={})=>{const u=new URL('api/index.php',ROOT);u.search=new URLSearchParams({action,...params});return u;};
+let sessionPromise;
+async function api(action,params={},data){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),22000);try{const options={signal:controller.signal,credentials:'same-origin'};if(data!==undefined){const s=await session();options.method='POST';options.headers={'Content-Type':'application/json','X-CSRF-Token':s.csrf};options.body=JSON.stringify(data);}const response=await fetch(endpoint(action,params),options);const type=response.headers.get('content-type')||'';if(!type.includes('application/json'))throw new Error('Серверные сервисы доступны на PHP-хостинге. Этот адрес обслуживает только статические страницы.');const result=await response.json();if(!response.ok)throw new Error(result.error||'Ошибка запроса');return result;}catch(e){if(e.name==='AbortError')throw new Error('Сервер не ответил вовремя. Повторите запрос.');throw e;}finally{clearTimeout(timer);}}
+function session(){return sessionPromise??=(api('session').catch(e=>{sessionPromise=null;throw e;}));}
+function error(el,e){if(el)el.innerHTML=`<div class="notice" role="alert">${esc(e.message)}</div>`;}
+function task(selector,fn){const el=$(selector);if(el)Promise.resolve().then(()=>fn(el)).catch(e=>error(el,e));}
+function bind(form,fn){if(!form)return;form.addEventListener('submit',async e=>{e.preventDefault();let status=form.querySelector('.form-status');if(!status){status=document.createElement('p');status.className='form-status';status.setAttribute('role','status');form.append(status);}const btn=form.querySelector('button[type=submit],button:not([type])');if(btn)btn.disabled=true;status.textContent='Обработка…';try{await fn(Object.fromEntries(new FormData(form)));status.textContent='Готово.';}catch(e){status.textContent=e.message;}finally{if(btn)btn.disabled=false;}});}
+function charts(rows,label,value){const max=Math.max(1,...rows.map(r=>Number(r[value])));return rows.map(r=>`<div class="chart-row"><span>${esc(r[label])}</span><progress max="${max}" value="${Number(r[value])}" aria-label="${esc(r[label])}: ${Number(r[value])}"></progress><span>${Number(r[value])}</span></div>`).join('');}
+function newsHTML(rows){return rows.map(n=>`<article class="list-item" id="news-${Number(n.id)}"><span class="small muted">${esc(n.date)}</span><h2>${esc(n.title)}</h2><p>${esc(n.text)}</p></article>`).join('')||'<p>Публикаций пока нет.</p>';}
+async function initStats(){try{await api('visit',{}, {page:decodeURIComponent(location.pathname.slice(ROOT.pathname.length))||'index.html'});const s=await api('stats');$$('[data-counter]').forEach(e=>e.textContent=s.summary.views);$$('[data-hosts]').forEach(e=>e.textContent=s.summary.visitors);}catch{$$('[data-counter],[data-hosts]').forEach(e=>{e.textContent='—';e.title='Счётчик временно недоступен';});}}
+function initClock(){const tick=()=>$$('[data-clock]').forEach(e=>e.textContent=new Date().toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'medium'}));tick();setInterval(tick,1000);}
+async function genres(){const x=await fetch(new URL('games.xml',ROOT)).then(r=>r.text());const doc=new DOMParser().parseFromString(x,'application/xml');const opts=[...new Set([...doc.querySelectorAll('genre')].map(e=>e.textContent))].sort();$$('[data-genres]').forEach(e=>e.innerHTML='<option value="">Все жанры</option>'+opts.map(g=>`<option>${esc(g)}</option>`).join(''));}
+function initCatalog(){const form=$('#catalog-filter');if(!form)return;async function render(d){const games=await api('games',d);$('#games-table').innerHTML=games.map(g=>`<tr><td>${esc(g.title)}</td><td>${esc(g.genre)}</td><td>${esc(g.platforms)}</td><td>${g.year}</td><td>${Number(g.rating).toFixed(1)}</td><td>${esc(g.tag)}</td></tr>`).join('')||'<tr><td colspan="6">Ничего не найдено</td></tr>';$('#catalog-status').textContent=`Найдено: ${games.length}`;}bind(form,render);const initial=new URLSearchParams(location.search).get('q')||'';form.elements.q.value=initial;render({q:initial}).catch(e=>error($('#catalog-status'),e));}
+function initXML(){bind($('#xml-filter'),async d=>{$('#xml-view').src=new URL('api/xml.php?'+new URLSearchParams(d),ROOT);});}
+function initSearch(){const form=$('#search-form');if(!form)return;const input=$('#site-query');input.value=new URLSearchParams(location.search).get('q')||'';let records;
+ async function search(d){if(!records){records=await fetch(new URL('search-index.json',ROOT)).then(r=>r.json());api('news').then(news=>{records.push(...news.map(n=>({title:n.title,url:'services/news.html#news-'+n.id,text:n.text})));return search({q:input.value});}).catch(()=>{});}const q=d.q.trim().toLowerCase();const found=records.filter(r=>{const text=(r.title+' '+r.text).toLowerCase();return !q||q.split(/\s+or\s+/i).some(group=>{const terms=group.split(/\s+/).filter(t=>t&&t!=='and');for(let i=0;i<terms.length;i++){if(terms[i]==='not'){if(!terms[i+1]||text.includes(terms[++i]))return false;}else if(!text.includes(terms[i]))return false;}return true;});});$('#search-status').textContent=`Найдено страниц: ${found.length}`;$('#search-results').innerHTML=found.map(r=>`<article class="list-item"><h2><a href="${new URL(r.url,ROOT)}">${esc(r.title)}</a></h2><p>${esc(r.text.replace(/\s+/g,' ').slice(0,180))}…</p></article>`).join('')||'<p>Попробуйте другое слово или более короткий запрос.</p>';const u=new URL(location.href);u.searchParams.set('q',q);history.replaceState(null,'',u);}
+ bind(form,search);search({q:input.value}).catch(e=>error($('#search-results'),e));}
+async function renderMessages(kind){const out=kind==='guest'?$('#guest-list'):$('#topic-list');const data=await api('messages',{kind});out.innerHTML=data.filter(m=>m.kind===kind).map(m=>`<article class="list-item"><span class="small muted">#${m.id} · ${esc(m.created_at)}</span><h2>${esc(m.title||m.author)}</h2>${m.title?`<p>${esc(m.author)}</p>`:''}<p>${esc(m.body)}</p>${kind==='forum'?`<details><summary>Ответы (${data.filter(r=>r.parent_id==m.id).length})</summary>${data.filter(r=>r.parent_id==m.id).reverse().map(r=>`<div class="list-item"><strong>${esc(r.author)}</strong><p>${esc(r.body)}</p></div>`).join('')}<form data-reply="${m.id}" class="form-grid"><label>Имя<input class="input" name="author" required maxlength="60"></label><label>Ответ<textarea class="textarea" name="text" required maxlength="2000"></textarea></label><button class="btn primary">Ответить</button></form></details>`:''}</article>`).join('')||'<div class="notice">Пока нет сообщений. Начните разговор.</div>';$$('form[data-reply]').forEach(f=>bind(f,async d=>{await api('message',{}, {...d,kind:'reply',parent_id:Number(f.dataset.reply)});await renderMessages('forum');}));}
+function initMessages(){for(const [selector,kind] of [['#guest-form','guest'],['#topic-form','forum']]){const form=$(selector);if(form){renderMessages(kind).catch(e=>error($(kind==='guest'?'#guest-list':'#topic-list'),e));bind(form,async d=>{await api('message',{}, {...d,kind});form.reset();await renderMessages(kind);});}}}
+async function ratingRender(out){const data=await api('ratings');out.innerHTML=data.map(g=>`<article class="list-item"><h2>${esc(g.title)}</h2><p>${g.votes>0?`${esc(g.average)} / 5 · голосов: ${g.votes}`:'Пока нет оценок'}</p><div class="rating-controls">${[1,2,3,4,5].map(n=>`<button class="btn" data-game="${esc(g.id)}" data-score="${n}" aria-label="Оценить ${esc(g.title)} на ${n}">${n} ★</button>`).join('')}</div></article>`).join('');out.querySelectorAll('button').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await api('rate',{}, {game_id:b.dataset.game,score:Number(b.dataset.score)});await ratingRender(out);}catch(e){error(out,e);}});}
+function initBudget(){bind($('#budget-form'),async d=>{const r=await api('budget',d);$('#budget-result').innerHTML=`${Number(r.rub).toLocaleString('ru-RU')} ₽<small>1 ${esc(r.currency)} = ${Number(r.rate).toLocaleString('ru-RU')} ₽<br>Банк России · курс на ${esc(r.date)}${r.stale?' · сохранённые данные, источник сейчас недоступен':''}</small>`;});}
+function initCalculators(){const f=$('#download-form');if(f){const calc=d=>{$('#download-result').textContent=`Минимальное время: ${Math.ceil(Number(d.size)*8000/Number(d.speed)/60)} мин.`;};bind(f,calc);calc({size:50,speed:100});}
+ const quiz=$('#quiz-form');if(quiz){const qs=[['Что означает кооператив?',['Совместная игра ради общей цели','Только соревнование','Игра без сети'],0,'Кооператив объединяет игроков общей задачей.'],['Что характерно для стратегии?',['Только прыжки','Планирование и управление ресурсами','Обязательный вид от первого лица'],1,'Решения и управление ресурсами — распространённые основы стратегии.'],['Что такое локальный мультиплеер?',['Игра на одном устройстве или в локальной сети','Только глобальный рейтинг','Автоматическое сохранение'],0,'Локальный формат не требует общего публичного сервера.'],['На что влияет SSD?',['Всегда удваивает FPS','Прежде всего на скорость загрузки данных','Меняет жанр игры'],1,'SSD ускоряет чтение данных, но не гарантирует рост FPS.'],['Что означает RPG?',['Ролевая игра','Гоночный симулятор','Режим записи'],0,'Role-playing game — ролевая игра.']];quiz.innerHTML=qs.map(([q,opts],i)=>`<fieldset><legend>${i+1}. ${q}</legend>${opts.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}" required>${o}</label>`).join('')}</fieldset>`).join('')+'<button class="btn primary">Проверить</button>';bind(quiz,d=>{const score=qs.filter((q,i)=>Number(d['q'+i])===q[2]).length;$('#quiz-result').innerHTML=`<h2>Результат: ${score} / 5</h2>`+qs.map((q,i)=>`<p>${i+1}. ${Number(d['q'+i])===q[2]?'Верно':'Неверно'}. ${q[3]}</p>`).join('');});}}
+async function adminRender(){const s=await session();$('#login-form').hidden=!(!s.admin);$('#admin-panel').hidden=!s.admin;if(!s.admin)return;const d=await api('admin_data');$('#admin-messages').innerHTML=d.messages.map(m=>`<article class="list-item"><h2>#${m.id} ${esc(m.title||m.author)}</h2><p>${esc(m.body)}</p><p>${m.visible?'Опубликовано':'Скрыто'}</p><button class="btn" data-moderate="${m.id}" data-visible="${m.visible?0:1}">${m.visible?'Скрыть':'Показать'}</button> <button class="btn" data-block="${esc(m.host_hash)}">Запретить публикации с адреса</button></article>`).join('')||'<p>Сообщений нет.</p>';$('#admin-words').innerHTML=d.words.map(w=>`<button class="btn" data-word="${esc(w.phrase)}">Убрать: ${esc(w.phrase)}</button>`).join('');$('#admin-hosts').innerHTML=d.hosts.map(h=>`<button class="btn" data-unblock="${h.host_hash}">Снять запрет ${h.host_hash.slice(0,12)}…</button>`).join('')||'<p>Нет заблокированных адресов.</p>';$$('[data-moderate],[data-block],[data-unblock],[data-word]').forEach(b=>b.onclick=async()=>{try{if(b.dataset.moderate)await api('moderate',{}, {id:Number(b.dataset.moderate),visible:Number(b.dataset.visible)});if(b.dataset.block)await api('block_host',{}, {host_hash:b.dataset.block});if(b.dataset.unblock)await api('block_host',{}, {host_hash:b.dataset.unblock,remove:true});if(b.dataset.word)await api('block_word',{}, {phrase:b.dataset.word,remove:true});await adminRender();}catch(e){error($('#admin-messages'),e);}});}
+function initAdmin(){if(!$('#login-form'))return;adminRender().catch(e=>error($('#login-form .form-status'),e));bind($('#login-form'),async d=>{await api('login',{}, d);sessionPromise=null;await adminRender();});bind($('#news-form'),async d=>{await api('news_save',{}, d);$('#news-form').reset();});bind($('#word-form'),async d=>{await api('block_word',{}, d);await adminRender();});$('#logout').onclick=async()=>{await api('logout',{}, {});sessionPromise=null;await adminRender();};}
+initClock();initStats();if($('[data-genres]'))genres().catch(()=>{});initCatalog();initXML();initSearch();initMessages();initBudget();initCalculators();initAdmin();
+task('#news-list',async el=>el.innerHTML=newsHTML(await api('news')));
+task('#home-news-list',async el=>el.innerHTML=newsHTML((await api('news')).slice(0,3)));
+task('#rating-box',ratingRender);
+task('#analytics',async el=>{const a=await api('analytics');el.innerHTML='<div class="metric-grid">'+[['Игр',a.summary.total],['Средняя оценка',a.summary.average],['Первый выпуск',a.summary.oldest],['Последний выпуск',a.summary.newest]].map(([k,v])=>`<div class="metric"><span>${k}</span><strong>${v}</strong></div>`).join('')+`</div><div class="split"><article class="card side-card"><h2>Игры по жанрам</h2>${charts(a.genres,'genre','total')}</article><article class="card side-card"><h2>Игры по годам</h2>${charts(a.years,'year','total')}</article></div><article class="card side-card"><h2>Пять лидеров редакции</h2>${a.top.map(g=>`<p>${esc(g.title)} — ${g.rating} / 5</p>`).join('')}</article>`;});
+task('#stats',async el=>{const d=await api('stats');el.innerHTML=`<div class="metric-grid"><div class="metric">Просмотры<strong>${d.summary.views}</strong></div><div class="metric">Сеансы<strong>${d.summary.visitors}</strong></div></div><h2>Последние 30 дней</h2>${charts(d.daily,'day','views')}<h2>По страницам</h2><div class="table-wrap"><table class="table"><thead><tr><th>Страница</th><th>Просмотры</th><th>Последнее посещение</th></tr></thead><tbody>${d.pages.map(p=>`<tr><td>${esc(p.page)}</td><td>${p.views}</td><td>${esc(p.last)}</td></tr>`).join('')}</tbody></table></div>`;});
+task('[data-currency]',async el=>{const d=await api('rates');el.textContent=`1 EUR = ${Number(d.rates.EUR).toFixed(2)} ₽`;const n=$('[data-currency-updated]');if(n)n.textContent=`Банк России · ${d.date}${d.stale?' · сохранённый курс':''}`;});
+task('[data-weather-grid]',async el=>{const d=await api('weather');el.innerHTML=d.items.map(n=>`<article class="weather-card"><h2>${esc(n.title)}</h2><p>${esc(n.text)}</p><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.source)} ↗</a><p class="small">${esc(n.date)}</p></article>`).join('');$('[data-weather-updated]').textContent=`Получено: ${d.fetched_at}${d.stale?' · сохранённый прогноз':''}`;});
+task('#rss-items',async el=>{const d=await api('feed');$('#rss-status').textContent=d.external.ok?(d.external.stale?'Внешняя лента из кэша; источник сейчас недоступен.':'Оба источника загружены.') : d.external.message;const select=$('[name=feed-source]');const render=()=>{el.innerHTML=d.items.filter(n=>!select.value||n.source===select.value).map(n=>`<article class="feed-item"><span class="tag">${esc(n.source)}</span><span class="small"> ${esc(n.date)}</span><h2><a href="${esc(n.url)}" ${n.source==='GameVerse'?'':'target="_blank" rel="noopener noreferrer"'}>${esc(n.title)}</a></h2>${n.text?`<p>${esc(n.text)}</p>`:''}</article>`).join('')||'<p>Публикаций нет.</p>';};select.onchange=render;render();});
+task('#poll-results',async el=>{const render=async()=>{const d=await api('poll');el.innerHTML=d.length?charts(d,'choice','total'):'<p>Пока нет голосов.</p>';};bind($('#poll-form'),async d=>{await api('vote',{},d);await render();});await render();});

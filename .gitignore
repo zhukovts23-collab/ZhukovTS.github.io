@@ -1,0 +1,14 @@
+.env
+app/config.local.php
+app/setup.local.php
+app/setup.result.json
+app/setup.completed.json
+app/setup.lock
+app/verification.result.json
+app/verification.lock
+app/cache/
+.openai/
+node_modules/
+*.log
+app/preview.env
+app/preview-bootstrap.sh

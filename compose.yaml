@@ -1,0 +1,32 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8080:80"
+    environment:
+      DB_DSN: mysql:host=db;dbname=gameverse;charset=utf8mb4
+      DB_USER: gameverse
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      APP_SECRET: ${APP_SECRET:?Set APP_SECRET}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_DATABASE: gameverse
+      MARIADB_USER: gameverse
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD}
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+volumes:
+  database:
