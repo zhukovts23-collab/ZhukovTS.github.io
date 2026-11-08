@@ -11,6 +11,11 @@ Header always set Content-Security-Policy "default-src 'self'; img-src 'self' da
 </IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# Retired duplicate catalogues
+RewriteRule ^games\.html$ /database-search.html [R=301,L]
+RewriteRule ^services/news\.html$ /rss.html [R=301,L]
+RewriteRule ^games\.xml$ /glossary.xml [R=301,L]
+RewriteRule ^games\.xsl$ /glossary.xsl [R=301,L]
 RewriteRule ^(?:\.git|app|bin|database|tests|docs)(?:/|$) - [F,L]
 RewriteRule ^rss\.xml$ api/export.php?format=rss [L]
 </IfModule>

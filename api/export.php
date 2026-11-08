@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require __DIR__.'/../app/bootstrap.php';
 try{
- $format=$_GET['format']??'rss';$rows=($_GET['source']??'local')==='merged'?feed_items()['items']:array_map(fn($n)=>['id'=>'local-'.$n['id'],'title'=>$n['title'],'text'=>$n['body'],'url'=>$config['base_url'].'/services/news.html#news-'.$n['id'],'source'=>'GameVerse','date'=>$n['published_at']],query('SELECT * FROM news ORDER BY published_at DESC LIMIT 100')->fetchAll());
+ $format=$_GET['format']??'rss';$rows=($_GET['source']??'local')==='merged'?feed_items()['items']:array_map(fn($n)=>['id'=>'local-'.$n['id'],'title'=>$n['title'],'text'=>$n['body'],'url'=>$config['base_url'].'/rss.html#news-'.$n['id'],'source'=>'GameVerse','date'=>$n['published_at']],query('SELECT * FROM news ORDER BY published_at DESC LIMIT 100')->fetchAll());
  header('X-Content-Type-Options: nosniff');
  if($format==='csv') {header('Content-Type: text/csv; charset=utf-8');header('Content-Disposition: attachment; filename="gameverse-news.csv"');$f=fopen('php://output','w');fputcsv($f,['id','title','text','url','source','date'],';','"','');foreach($rows as $r)fputcsv($f,array_map(fn($v)=>preg_match('/^[=+@\-\t\r]/',(string)$v)?"'".$v:$v,array_values($r)),';','"','');exit;}
  $doc=new DOMDocument('1.0','UTF-8');$doc->formatOutput=true;

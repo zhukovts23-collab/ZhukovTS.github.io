@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="glossary.xsl"?>
+<glossary title="Игровые термины GameVerse" updated="2026-11-08">
+  <term id="term-001">
+    <title>Кооператив</title>
+    <category>Режимы</category>
+    <definition>Совместная игра нескольких участников ради общей цели.</definition>
+    <example>Игроки вместе проходят уровень.</example>
+    <english>Co-op</english>
+    <related>Мультиплеер</related>
+  </term>
+  <term id="term-002">
+    <title>Мультиплеер</title>
+    <category>Режимы</category>
+    <definition>Игровой режим с участием нескольких людей.</definition>
+    <example>Командный матч на сервере.</example>
+    <english>Multiplayer</english>
+    <related>Кооператив</related>
+  </term>
+  <term id="term-003">
+    <title>Одиночная игра</title>
+    <category>Режимы</category>
+    <definition>Режим, рассчитанный на одного игрока.</definition>
+    <example>Прохождение сюжетной кампании.</example>
+    <english>Single-player</english>
+    <related>Кампания</related>
+  </term>
+  <term id="term-004">
+    <title>Локальный мультиплеер</title>
+    <category>Режимы</category>
+    <definition>Совместная или соревновательная игра на одном устройстве либо в локальной сети.</definition>
+    <example>Два контроллера на одной консоли.</example>
+    <english>Local multiplayer</english>
+    <related>Разделённый экран</related>
+  </term>
+  <term id="term-005">
+    <title>Разделённый экран</title>
+    <category>Режимы</category>
+    <definition>Вывод нескольких игровых видов на одном экране.</definition>
+    <example>Каждый участник видит свою половину изображения.</example>
+    <english>Split screen</english>
+    <related>Локальный мультиплеер</related>
+  </term>
+  <term id="term-006">
+    <title>Кроссплей</title>
+    <category>Режимы</category>
+    <definition>Совместная игра пользователей разных поддерживаемых платформ.</definition>
+    <example>Игроки ПК и консоли встречаются в одном матче.</example>
+    <english>Cross-play</english>
+    <related>Платформа</related>
+  </term>
+  <term id="term-007">
+    <title>Кампания</title>
+    <category>Режимы</category>
+    <definition>Связанная последовательность заданий или уровней.</definition>
+    <example>Несколько миссий с общей историей.</example>
+    <english>Campaign</english>
+    <related>Миссия</related>
+  </term>
+  <term id="term-008">
+    <title>Песочница</title>
+    <category>Дизайн</category>
+    <definition>Игровой формат со значительной свободой действий и эксперимента.</definition>
+    <example>Игрок самостоятельно выбирает цель строительства.</example>
+    <english>Sandbox</english>
+    <related>Открытый мир</related>
+  </term>
+  <term id="term-009">
+    <title>Открытый мир</title>
+    <category>Дизайн</category>
+    <definition>Большое связное пространство, доступное для относительно свободного исследования.</definition>
+    <example>Путешествие между регионами без строгого порядка.</example>
+    <english>Open world</english>
+    <related>Песочница</related>
+  </term>
+  <term id="term-010">
+    <title>Игровой цикл</title>
+    <category>Дизайн</category>
+    <definition>Повторяющаяся последовательность основных действий игрока.</definition>
+    <example>Исследовать, собрать ресурсы, улучшить снаряжение.</example>
+    <english>Core loop</english>
+    <related>Механика</related>
+  </term>
+  <term id="term-011">
+    <title>Механика</title>
+    <category>Дизайн</category>
+    <definition>Правило или система, определяющая взаимодействие игрока с игрой.</definition>
+    <example>Прыжок с ограниченной высотой.</example>
+    <english>Mechanic</english>
+    <related>Игровой цикл</related>
+  </term>
+  <term id="term-012">
+    <title>Баланс</title>
+    <category>Дизайн</category>
+    <definition>Соотношение возможностей и ограничений игровых систем.</definition>
+    <example>Цена улучшения соответствует его пользе.</example>
+    <english>Balance</english>
+    <related>Сложность</related>
+  </term>
+  <term id="term-013">
+    <title>Сложность</title>
+    <category>Дизайн</category>
+    <definition>Уровень требований игры к действиям и решениям игрока.</definition>
+    <example>Настройка количества противников и запаса ресурсов.</example>
+    <english>Difficulty</english>
+    <related>Баланс</related>
+  </term>
+  <term id="term-014">
+    <title>Процедурная генерация</title>
+    <category>Дизайн</category>
+    <definition>Создание содержимого по алгоритмам и заданным правилам.</definition>
+    <example>Новая карта при каждом запуске.</example>
+    <english>Procedural generation</english>
+    <related>Случайность</related>
+  </term>
+  <term id="term-015">
+    <title>Случайность</title>
+    <category>Дизайн</category>
+    <definition>Использование непредопределённого для игрока результата.</definition>
+    <example>Разный набор наград в сундуке.</example>
+    <english>Randomness</english>
+    <related>Процедурная генерация</related>
+  </term>
+  <term id="term-016">
+    <title>Контрольная точка</title>
+    <category>Прогресс</category>
+    <definition>Место или событие, от которого можно продолжить после неудачи.</definition>
+    <example>Повтор уровня после последней двери.</example>
+    <english>Checkpoint</english>
+    <related>Сохранение</related>
+  </term>
+  <term id="term-017">
+    <title>Сохранение</title>
+    <category>Прогресс</category>
+    <definition>Запись состояния прохождения для последующего продолжения.</definition>
+    <example>Файл с прогрессом кампании.</example>
+    <english>Save game</english>
+    <related>Автосохранение</related>
+  </term>
+  <term id="term-018">
+    <title>Автосохранение</title>
+    <category>Прогресс</category>
+    <definition>Сохранение состояния, выполняемое игрой автоматически.</definition>
+    <example>Запись прогресса после задания.</example>
+    <english>Autosave</english>
+    <related>Сохранение</related>
+  </term>
+  <term id="term-019">
+    <title>Облачное сохранение</title>
+    <category>Прогресс</category>
+    <definition>Синхронизация сохранений через удалённый сервис.</definition>
+    <example>Продолжение игры на другом устройстве.</example>
+    <english>Cloud save</english>
+    <related>Сохранение</related>
+  </term>
+  <term id="term-020">
+    <title>Достижение</title>
+    <category>Прогресс</category>
+    <definition>Отметка о выполнении определённого игрового условия.</definition>
+    <example>Награда за завершение главы.</example>
+    <english>Achievement</english>
+    <related>Прогрессия</related>
+  </term>
+  <term id="term-021">
+    <title>Прогрессия</title>
+    <category>Прогресс</category>
+    <definition>Система изменения возможностей или состояния игрока по мере прохождения.</definition>
+    <example>Открытие новых навыков.</example>
+    <english>Progression</english>
+    <related>Дерево навыков</related>
+  </term>
+  <term id="term-022">
+    <title>Дерево навыков</title>
+    <category>Прогресс</category>
+    <definition>Структура связанных улучшений, выбираемых игроком.</definition>
+    <example>Открытие способности после освоения предыдущей.</example>
+    <english>Skill tree</english>
+    <related>Прогрессия</related>
+  </term>
+  <term id="term-023">
+    <title>Миссия</title>
+    <category>Прогресс</category>
+    <definition>Отдельное задание с условиями выполнения.</definition>
+    <example>Защита объекта до завершения таймера.</example>
+    <english>Mission</english>
+    <related>Кампания</related>
+  </term>
+  <term id="term-024">
+    <title>Побочное задание</title>
+    <category>Прогресс</category>
+    <definition>Дополнительная задача вне основного пути прохождения.</definition>
+    <example>Помощь персонажу в соседнем поселении.</example>
+    <english>Side quest</english>
+    <related>Миссия</related>
+  </term>
+  <term id="term-025">
+    <title>Частота кадров</title>
+    <category>Техника</category>
+    <definition>Количество изображений, сформированных игрой за секунду.</definition>
+    <example>Счётчик показывает 60 кадров в секунду.</example>
+    <english>Frame rate</english>
+    <related>Время кадра</related>
+  </term>
+  <term id="term-026">
+    <title>Время кадра</title>
+    <category>Техника</category>
+    <definition>Время, необходимое для подготовки одного кадра.</definition>
+    <example>Длинный отдельный кадр вызывает заметный рывок.</example>
+    <english>Frame time</english>
+    <related>Частота кадров</related>
+  </term>
+  <term id="term-027">
+    <title>Разрешение</title>
+    <category>Техника</category>
+    <definition>Размер изображения в пикселях по горизонтали и вертикали.</definition>
+    <example>Выбор 1920 на 1080 в настройках.</example>
+    <english>Resolution</english>
+    <related>Масштабирование</related>
+  </term>
+  <term id="term-028">
+    <title>Масштабирование</title>
+    <category>Техника</category>
+    <definition>Изменение размера или восстановление изображения из другой исходной сетки.</definition>
+    <example>Вывод кадра большего разрешения из меньшего.</example>
+    <english>Upscaling</english>
+    <related>Разрешение</related>
+  </term>
+  <term id="term-029">
+    <title>Вертикальная синхронизация</title>
+    <category>Техника</category>
+    <definition>Согласование вывода кадров с обновлением экрана.</definition>
+    <example>Настройка для уменьшения разрывов изображения.</example>
+    <english>VSync</english>
+    <related>Частота обновления</related>
+  </term>
+  <term id="term-030">
+    <title>Частота обновления</title>
+    <category>Техника</category>
+    <definition>Число обновлений изображения экраном за секунду.</definition>
+    <example>Монитор работает в режиме 144 Гц.</example>
+    <english>Refresh rate</english>
+    <related>Частота кадров</related>
+  </term>
+  <term id="term-031">
+    <title>Задержка ввода</title>
+    <category>Техника</category>
+    <definition>Промежуток между действием пользователя и видимым ответом.</definition>
+    <example>Время от нажатия до движения персонажа.</example>
+    <english>Input lag</english>
+    <related>Задержка сети</related>
+  </term>
+  <term id="term-032">
+    <title>Задержка сети</title>
+    <category>Сеть</category>
+    <definition>Время обмена данными между клиентом и сервером.</definition>
+    <example>Индикатор пинга в сетевом матче.</example>
+    <english>Network latency</english>
+    <related>Потеря пакетов</related>
+  </term>
+  <term id="term-033">
+    <title>Потеря пакетов</title>
+    <category>Сеть</category>
+    <definition>Недоставка части передаваемых сетевых сообщений.</definition>
+    <example>Обновления состояния приходят с пропусками.</example>
+    <english>Packet loss</english>
+    <related>Задержка сети</related>
+  </term>
+  <term id="term-034">
+    <title>Сервер</title>
+    <category>Сеть</category>
+    <definition>Программа или узел, обслуживающий игровые подключения.</definition>
+    <example>Узел хранит общее состояние матча.</example>
+    <english>Server</english>
+    <related>Клиент</related>
+  </term>
+  <term id="term-035">
+    <title>Клиент</title>
+    <category>Сеть</category>
+    <definition>Приложение игрока, обменивающееся данными с сервером.</definition>
+    <example>Игра на компьютере подключается к матчу.</example>
+    <english>Client</english>
+    <related>Сервер</related>
+  </term>
+  <term id="term-036">
+    <title>Подбор игроков</title>
+    <category>Сеть</category>
+    <definition>Система формирования игровых встреч по заданным условиям.</definition>
+    <example>Поиск участников подходящего региона.</example>
+    <english>Matchmaking</english>
+    <related>Рейтинг подбора</related>
+  </term>
+  <term id="term-037">
+    <title>Рейтинг подбора</title>
+    <category>Сеть</category>
+    <definition>Внутренняя оценка, используемая системой для подбора соперников.</definition>
+    <example>Показатель меняется по результатам матчей.</example>
+    <english>Matchmaking rating</english>
+    <related>Подбор игроков</related>
+  </term>
+  <term id="term-038">
+    <title>Лобби</title>
+    <category>Сеть</category>
+    <definition>Пространство подготовки участников до начала матча.</definition>
+    <example>Команда выбирает роли перед запуском.</example>
+    <english>Lobby</english>
+    <related>Подбор игроков</related>
+  </term>
+  <term id="term-039">
+    <title>Игровой движок</title>
+    <category>Разработка</category>
+    <definition>Набор программных систем и инструментов для создания игры.</definition>
+    <example>Общая среда сцены, физики и логики.</example>
+    <english>Game engine</english>
+    <related>Прототип</related>
+  </term>
+  <term id="term-040">
+    <title>Прототип</title>
+    <category>Разработка</category>
+    <definition>Ранняя упрощённая версия для проверки идеи.</definition>
+    <example>Сцена с временными объектами проверяет механику.</example>
+    <english>Prototype</english>
+    <related>Игровой цикл</related>
+  </term>
+  <term id="term-041">
+    <title>Патч</title>
+    <category>Разработка</category>
+    <definition>Обновление, исправляющее или изменяющее игру.</definition>
+    <example>Новая версия устраняет ошибку загрузки.</example>
+    <english>Patch</english>
+    <related>Версия</related>
+  </term>
+  <term id="term-042">
+    <title>Версия</title>
+    <category>Разработка</category>
+    <definition>Обозначенное состояние выпуска программного продукта.</definition>
+    <example>Номер сборки позволяет проверить совместимость.</example>
+    <english>Version</english>
+    <related>Патч</related>
+  </term>
+  <term id="term-043">
+    <title>Модификация</title>
+    <category>Разработка</category>
+    <definition>Изменение содержимого или поведения игры сторонним дополнением.</definition>
+    <example>Новый интерфейс, установленный пользователем.</example>
+    <english>Mod</english>
+    <related>Совместимость</related>
+  </term>
+  <term id="term-044">
+    <title>Совместимость</title>
+    <category>Разработка</category>
+    <definition>Возможность компонентов корректно работать вместе.</definition>
+    <example>Мод поддерживает конкретную версию игры.</example>
+    <english>Compatibility</english>
+    <related>Модификация</related>
+  </term>
+  <term id="term-045">
+    <title>Локализация</title>
+    <category>Разработка</category>
+    <definition>Адаптация игры к языку и культурному контексту аудитории.</definition>
+    <example>Перевод меню, субтитров и озвучивания.</example>
+    <english>Localization</english>
+    <related>Субтитры</related>
+  </term>
+  <term id="term-046">
+    <title>Субтитры</title>
+    <category>Доступность</category>
+    <definition>Текстовое отображение речи и иногда звуковых событий.</definition>
+    <example>Подпись реплики с именем говорящего.</example>
+    <english>Subtitles</english>
+    <related>Локализация</related>
+  </term>
+  <term id="term-047">
+    <title>Переназначение клавиш</title>
+    <category>Доступность</category>
+    <definition>Изменение соответствия между кнопками и действиями.</definition>
+    <example>Прыжок переносится на удобную клавишу.</example>
+    <english>Key remapping</english>
+    <related>Задержка ввода</related>
+  </term>
+  <term id="term-048">
+    <title>Платформа</title>
+    <category>Разработка</category>
+    <definition>Среда или семейство устройств, на которых доступна игра.</definition>
+    <example>Версии для ПК и консолей.</example>
+    <english>Platform</english>
+    <related>Кроссплей</related>
+  </term>
+  <term id="term-049">
+    <title>Интерфейс</title>
+    <category>Доступность</category>
+    <definition>Средства отображения информации и управления игрой.</definition>
+    <example>Меню, индикаторы и подсказки действий.</example>
+    <english>User interface</english>
+    <related>Переназначение клавиш</related>
+  </term>
+  <term id="term-050">
+    <title>Список желаемого</title>
+    <category>Покупки</category>
+    <definition>Сохранённый пользователем перечень интересующих игр.</definition>
+    <example>Игрок отмечает проект, чтобы вернуться к нему позже.</example>
+    <english>Wishlist</english>
+    <related>Платформа</related>
+  </term>
+</glossary>

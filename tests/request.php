@@ -1,6 +1,7 @@
 <?php
 // CLI-only harness: exercises the actual API controllers without a web server.
 if(PHP_SAPI!=='cli')exit;
+if(getenv('TEST_SESSION_DIR'))ini_set('session.save_path',getenv('TEST_SESSION_DIR'));
 class TestInput {public $context;private int $pos=0;function stream_open($p,$m,$o,&$opened){return $p==='php://input';}function stream_read($n){$s=substr(getenv('TEST_BODY')?:'', $this->pos,$n);$this->pos+=strlen($s);return $s;}function stream_eof(){return $this->pos>=strlen(getenv('TEST_BODY')?:'');}function stream_stat(){return [];}}
 $_GET=json_decode(getenv('TEST_QUERY')?:'{}',true);$_SERVER['REQUEST_METHOD']=getenv('TEST_METHOD')?:'GET';$_SERVER['HTTP_X_CSRF_TOKEN']=getenv('TEST_CSRF')?:'';$_SERVER['REMOTE_ADDR']=getenv('TEST_IP')?:'127.0.0.1';
 if(getenv('TEST_SESSION'))session_id(getenv('TEST_SESSION'));

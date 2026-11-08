@@ -29,7 +29,7 @@ _,g=request('games',query={'q':'Portal'});check(len(g)==1 and g[0]['title']=='Po
 _,g=request('games',query={'q':"' OR 1=1 --"});check(len(g)==0,'SQL injection is literal input')
 _,a=request('analytics');check(int(a['summary']['total'])==20 and sum(int(x['total']) for x in a['genres'])==20,'Aggregate counts')
 check(len(a['top'])==5,'TOP 5')
-_,x=request(controller='xml.php',query={'q':'portal'});check('Portal 2' in x and 'Minecraft' not in x,'Server XSLT filtering')
+_,x=request(controller='xml.php',query={'q':'кооператив'});check('Кооператив' in x and '<td>Клиент</td>' not in x,'Server XSLT filtering')
 _,x=request(controller='xml.php',query={'q':'"<script>alert(1)</script>'});check('<script>' not in x,'XSLT parameter escaping')
 _,g=request('games',query={'sort':'year'});check([int(x['year']) for x in g]==sorted([int(x['year']) for x in g],reverse=True),'Year sorting')
 status,_=request('message',{'kind':'guest','author':'QA','text':'test'},token=False);check(status==403,'CSRF rejected')

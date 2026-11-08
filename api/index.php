@@ -1,21 +1,26 @@
 <?php
 declare(strict_types=1);
 require __DIR__.'/../app/bootstrap.php';
+require_once __DIR__.'/../app/catalog.php';
+require_once __DIR__.'/../app/rss.php';
 header('X-Content-Type-Options: nosniff');
 try {
  session_init();$action=$_GET['action']??'';$post=$_SERVER['REQUEST_METHOD']==='POST';
  if($post)csrf();
  if(!in_array($action,['login','logout'],true))session_write_close();
- $writes=['login','logout','news_save','message','moderate','block_word','block_host','rate','vote','visit'];
+ $writes=['login','logout','news_save','message','moderate','block_word','block_host','rate','vote','visit','game_save','rss_source_save','rss_source_toggle'];
  if(in_array($action,$writes,true)&&!$post)fail('Используйте POST',405);
+ catalog_handle($action); rss_handle($action);
  switch($action){
  case 'session':json_out(['csrf'=>$_SESSION['csrf'],'admin'=>!empty($_SESSION['admin'])&&time()-($_SESSION['login_at']??0)<=7200]);
  case 'login':rate_limit('login',8,900);$d=input();$row=query('SELECT * FROM admins WHERE username=?',[field($d,'username',80)])->fetch();if(!$row||!password_verify(field($d,'password',200),$row['password_hash']))fail('Неверный логин или пароль',401);session_regenerate_id(true);$_SESSION['admin']=$row['id'];$_SESSION['login_at']=time();json_out(['ok'=>true]);
  case 'logout':$_SESSION=[];session_destroy();json_out(['ok'=>true]);
  case 'games':
-  $sort=['title'=>'title ASC','year'=>'year DESC, title ASC','rating'=>'rating DESC,title ASC'][$_GET['sort']??'title']??'title ASC';
-  $q=mb_substr((string)($_GET['q']??''),0,100);$g=mb_substr((string)($_GET['genre']??''),0,60);
-  json_out(query("SELECT * FROM games WHERE (?='' OR title LIKE ?) AND (?='' OR genre=?) ORDER BY $sort",[$q,'%'.$q.'%',$g,$g])->fetchAll());
+  $sort=['title'=>'title ASC','year'=>'year DESC,title ASC','rating'=>'rating DESC,title ASC'][$_GET['sort']??'title']??'title ASC';
+  $q=mb_substr((string)($_GET['q']??''),0,100);$g=mb_substr((string)($_GET['genre']??''),0,60);$p=mb_substr((string)($_GET['platform']??''),0,60);
+  $rows=query("SELECT * FROM games WHERE (?='' OR title LIKE ?) AND (?='' OR genre=?) ORDER BY $sort",[$q,'%'.$q.'%',$g,$g])->fetchAll();
+  $rows=array_values(array_filter($rows,fn($r)=>$p===''||in_array($p,explode(' / ',$r['platforms']),true)));
+  foreach($rows as &$r)$r['version']=hash('sha256',json_encode($r));unset($r);json_out($rows);
  case 'analytics':json_out(['summary'=>query('SELECT COUNT(*) total,ROUND(AVG(rating),2) average,MIN(year) oldest,MAX(year) newest FROM games')->fetch(),'genres'=>query('SELECT genre,COUNT(*) total,ROUND(AVG(rating),2) average FROM games GROUP BY genre ORDER BY total DESC,genre')->fetchAll(),'years'=>query('SELECT year,COUNT(*) total FROM games GROUP BY year ORDER BY year')->fetchAll(),'top'=>query('SELECT title,rating FROM games ORDER BY rating DESC,title LIMIT 5')->fetchAll()]);
  case 'news':json_out(query('SELECT id,title,body AS text,published_at AS date FROM news ORDER BY published_at DESC,id DESC LIMIT 100')->fetchAll());
  case 'news_save':admin();$d=input();query('INSERT INTO news(title,body) VALUES (?,?)',[field($d,'title',200),field($d,'text',10000)]);json_out(['ok'=>true]);

@@ -12,3 +12,7 @@ node_modules/
 *.log
 app/preview.env
 app/preview-bootstrap.sh
+
+app/config.local.php.*
+app/review-*.json
+app/https-migration*
