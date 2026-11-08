@@ -1,0 +1,37 @@
+{
+  "version": "20261108-1",
+  "content": [
+    "index.html",
+    "about.html",
+    "genres.html",
+    "platforms.html",
+    "reviews.html",
+    "esports.html",
+    "gallery.html",
+    "links.html",
+    "knowledge.html",
+    "choosing-a-game.html",
+    "cooperative-play.html",
+    "performance.html",
+    "accessibility.html",
+    "save-games.html",
+    "mods.html",
+    "game-audio.html",
+    "network-play.html",
+    "game-development.html",
+    "indie-games.html",
+    "esports-preparation.html"
+  ],
+  "services": [
+    "services/pulse.html",
+    "services/budget.html",
+    "services/calculator.html",
+    "services/quiz.html",
+    "services/poll.html",
+    "services/search.html",
+    "services/guestbook.html",
+    "services/forum.html",
+    "services/rating.html",
+    "services/stats.html"
+  ]
+}
